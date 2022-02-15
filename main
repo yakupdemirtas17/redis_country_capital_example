@@ -1,0 +1,86 @@
+from operator import truediv
+import redis
+
+
+def set_capital(country, capital):  #Connect with redis and then add the given key,value pair.
+    r = redis.Redis()
+    r.set(country,capital)
+    r.quit
+def get_capital(country):   #Connect with redis and then get the value for given key.
+    r = redis.Redis()
+    bool1 = find_capital(country)
+    if (bool1):
+        x = r.get(country).decode("latin")
+        print(x)
+    else:
+        print("Please try a valid country.")
+    r.quit
+    
+def find_capital(country):  #Connect with redis and then return whether there is given key or not.
+    r = redis.Redis()
+    value = r.exists(country)
+    r.quit
+    return value
+def delete_capital(country):   #Connect with redis and then delete the pair for given key.
+    r = redis.Redis()
+    value = r.exists(country)
+    if (not value):
+        print("This country did not append there.")
+    else:
+        cap = r.get(country)
+        r.delete(country)
+        print (country, ": " , cap, "was erased sucessfully.")
+        r.quit
+def list_all_capital():   #Connect with redis and then list all pairs.
+    r = redis.Redis()
+    x = r.keys("*")
+    for i in x:
+        cap = r.get(i).decode("utf-8")
+        y= i.decode("utf-8")
+        print(y, ": ", cap)
+    l = x.__len__()
+    print("Number of countries are ", l)
+    r.quit
+
+def reset_db():     #Connect with redis and reset it.
+    r = redis.Redis()
+    r.flushdb()
+
+
+def main():    # Main function
+    print( " Please choose the operation :")
+    print( " (1) Add capital:")
+    print( " (2) Search capital:")
+    print( " (3) Whether the country was added or not:")
+    print( " (4) Delete capital:")
+    print( " (5) List all of them:")
+    print( " (6) Reset Database:")
+    print( " (7) Quit")
+    bool1 = True
+    while (bool1):
+        islem = input()
+        if (islem == "1"):
+            country = input ("Country:")
+            capital = input ("Capital:")
+            set_capital(country, capital)
+        elif (islem == "2"):
+            country = input ("Country:")
+            get_capital(country)
+        elif (islem == "3"):
+            country = input ("Country:")
+            bool2 = find_capital(country)
+            if (bool2):
+                print("The country was added before.")
+            else:
+                print("The country was not added before, please select 1 for adding that.")
+        elif (islem == "4"):
+            country = input ("Country:")
+            delete_capital(country)
+        elif (islem == "5"):
+            list_all_capital()
+        elif (islem == "6"):
+            reset_db()
+        elif (islem =="7"):
+            bool1 = False
+
+main()   # call main() in order to run the code.
